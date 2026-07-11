@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenlish TOEIC - Ôn Tập Từ Vựng Công Sở (60 từ)</title>
+<style>
+:root {
+    --zenlish-blue: #0037f4;
+    --zenlish-orange: #ff7900;
+    --zenlish-light: #eff6ff;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --dark: #0f172a;
+    --gray: #64748b;
+    --purple: #7c3aed;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background: #f1f5f9; color: var(--dark); padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; user-select: none; -webkit-user-select: none; }
+#app { background: white; max-width: 850px; width: 100%; padding: 25px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0, 55, 244, 0.08); margin-top: 10px; border-top: 6px solid var(--zenlish-blue); position: relative; }
+.brand-header { text-align: center; margin-bottom: 20px; }
+.brand-title { color: var(--zenlish-blue); font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; }
+.brand-subtitle { color: var(--zenlish-orange); font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.status-bar { display: flex; justify-content: space-between; align-items: center; background: var(--zenlish-light); padding: 12px 18px; border-radius: 10px; font-weight: bold; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+#timer { color: var(--zenlish-blue); font-size: 1.1rem; }
+#mastery-counter { color: var(--zenlish-orange); font-size: 0.95rem; margin-left: 12px; }
+#survival-countdown { font-size: 1.5rem; color: var(--zenlish-orange); font-weight: 800; background: #fff; padding: 4px 16px; border-radius: 8px; border: 2px solid var(--zenlish-orange); box-shadow: 0 4px 6px rgba(255,121,0,0.1); }
+.progress-container { height: 8px; width: 100%; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--zenlish-blue), var(--zenlish-orange)); width: 0%; transition: width 0.3s; }
+.badge { background: var(--zenlish-blue); color: white; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 15px; text-transform: uppercase; }
+.screen { display: none; }
+.screen.active { display: block; }
+input[type="text"] { width: 100%; padding: 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 1.05rem; margin-bottom: 15px; outline: none; text-align: center; font-weight: 600; }
+input[type="text"]:focus { border-color: var(--zenlish-blue); box-shadow: 0 0 0 3px rgba(0,55,244,0.1); }
+button.btn-core { background: var(--zenlish-blue); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 55, 244, 0.2); }
+button.btn-core:hover { background: #002bc5; }
+button.btn-core:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+h3 { font-size: 1.15rem; line-height: 1.6; margin-bottom: 15px; color: #1e293b; }
+.hint-line { text-align: center; color: var(--gray); font-size: 0.88rem; margin: -8px 0 12px; }
+/* FLASHCARD */
+.flashcard-wrapper { display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
+.flashcard { width: 100%; min-height: 170px; background: linear-gradient(135deg, var(--zenlish-blue), #1d4ed8); color: white; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; box-shadow: 0 8px 16px rgba(0,37,244,0.15); }
+.flashcard .word { font-size: 1.6rem; font-weight: 700; margin-bottom: 5px; }
+.flashcard .ipa { font-size: 1rem; opacity: 0.85; font-style: italic; margin-bottom: 8px; }
+.flashcard .back-content { display: none; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; width: 100%; }
+.flashcard.flipped { background: #1e293b; }
+.flashcard.flipped .back-content { display: block; }
+.fc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 15px; display: none; }
+.btn-fc { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+.fc-status-line { text-align: center; color: var(--gray); font-size: 0.9rem; margin-top: 10px; }
+/* SCRAMBLE */
+.scramble-preview { font-size: 1.7rem; font-weight: 800; letter-spacing: 2px; color: var(--zenlish-blue); text-align: center; margin: 15px 0; min-height: 38px; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; text-transform: uppercase; }
+.letters-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px 0; }
+.letter-tile { background: white; border: 2px solid #cbd5e1; width: 44px; height: 42px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.letter-tile.selected { background: #e2e8f0; color: transparent; pointer-events: none; }
+.scramble-actions { display: flex; gap: 15px; justify-content: center; margin-top: 15px; }
+.btn-scr-action { padding: 10px 20px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: white; }
+/* TYPE INPUT */
+.type-prompt-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
+.type-prompt-box .def-text { font-size: 1.2rem; font-weight: 700; color: var(--zenlish-blue); margin-bottom: 6px; }
+.mc-input-row { display: flex; gap: 10px; margin-top: 10px; }
+.mc-text-input { flex: 1; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1.05rem; text-align: center; font-weight: 600; outline: none; }
+.mc-text-input:focus { border-color: var(--zenlish-blue); }
+.mc-text-input.correct-input { border-color: var(--success); background: #d1fae5; }
+.mc-text-input.wrong-input { border-color: var(--danger); background: #fee2e2; }
+.btn-submit-inline { background: var(--zenlish-blue); color: white; border: none; padding: 0 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+.reveal-line { text-align: center; margin-top: 10px; font-weight: bold; min-height: 22px; }
+.listen-btn { background: var(--zenlish-orange); color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; cursor: pointer; display: block; margin: 0 auto 15px; font-size: 1rem; }
+/* MATCHING */
+.matching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.match-card { background: white; border: 2px solid #e2e8f0; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; min-height: 55px; display: flex; align-items: center; justify-content: center; text-align: center; transition: all 0.2s; }
+.match-card.selected { border-color: var(--zenlish-blue); background: var(--zenlish-light); color: var(--zenlish-blue); font-weight: bold; }
+.match-card.wrong-flash { border-color: var(--danger) !important; background: #fee2e2 !important; color: var(--danger) !important; }
+.match-card.matched { visibility: hidden; opacity: 0; pointer-events: none; }
+/* STORY */
+.story-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; line-height: 2.6; font-size: 1.03rem; text-align: justify; margin-bottom: 20px; }
+.drop-zone { display: inline-block; min-width: 140px; min-height: 34px; border: 2px dashed var(--zenlish-blue); background: #fff; vertical-align: middle; text-align: center; line-height: 30px; font-weight: 700; color: var(--zenlish-blue); margin: 0 5px; border-radius: 4px; transition: all 0.2s; cursor: grab; padding: 0 8px; font-size: 0.9rem; }
+.drop-zone.drag-over { background: var(--zenlish-light); border-color: var(--zenlish-orange); }
+.drop-zone.correct-glow { background: #d1fae5 !important; border-color: var(--success) !important; color: var(--success) !important; }
+.drop-zone.wrong-glow { background: #fee2e2 !important; border-color: var(--danger) !important; color: var(--danger) !important; }
+.pool-container { display: flex; flex-wrap: wrap; gap: 8px; background: #fff; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 10px; min-height: 60px; justify-content: center; }
+.pool-word { background: white; border: 2px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; cursor: grab; font-weight: 600; font-size: 0.92rem; user-select: none; }
+.pool-word.used { opacity: 0.25; pointer-events: none; cursor: default; }
+/* MC (Translation / Synonym / ChotHa) */
+.opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+.opt-btn, .survival-btn { padding: 14px 18px; border: 2px solid #cbd5e1; background: white; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 600; font-size: 1rem; color: #1e293b; transition: all 0.2s; }
+.opt-btn:hover, .survival-btn:hover { border-color: var(--zenlish-blue); transform: translateY(-1px); background: var(--zenlish-light); }
+.opt-btn.correct, .survival-btn.correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
+.opt-btn.wrong, .survival-btn.wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
+/* TRUE/FALSE */
+.tf-statement { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; text-align: center; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
+.tf-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.btn-tf { padding: 16px; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; color: white; }
+.btn-tf.true-btn { background: var(--success); }
+.btn-tf.false-btn { background: var(--danger); }
+.btn-tf:disabled { opacity: 0.5; cursor: not-allowed; }
+/* SPEED CHAIN */
+.speedchain-box { background: linear-gradient(135deg, var(--purple), #5b21b6); color: white; border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 15px; }
+.speedchain-box .combo { font-size: 0.95rem; opacity: 0.9; margin-bottom: 8px; }
+.speedchain-box .def-text { font-size: 1.4rem; font-weight: 800; }
+.speedchain-box .type-text { font-size: 0.9rem; opacity: 0.85; margin-top: 4px; }
+#speedchain-timerbar-outer { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; margin-bottom: 15px; }
+#speedchain-timerbar-inner { height: 100%; background: linear-gradient(90deg, var(--purple), var(--danger)); width: 100%; transition: width 0.1s linear; }
+/* RESULT */
+.celebration-text { color: var(--zenlish-blue); font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+.certificate-container { margin: 20px 0; display: flex; flex-direction: column; align-items: center; }
+#canvas-cert { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+.btn-download { background: var(--zenlish-orange); color: white; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; }
+.end-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 20px; }
+.btn-alt { background: #64748b; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+.btn-alt:hover { opacity: 0.9; }
+.review-section { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 25px; text-align: left; display: none; max-height: 450px; overflow-y: auto; }
+.review-item { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 0.92rem; line-height: 1.5; }
+.review-item strong { color: var(--zenlish-blue); font-size: 1.02rem; }
+.mastery-box { background: var(--zenlish-light); border-radius: 10px; padding: 20px; text-align: center; margin: 15px 0; }
+.mastery-pct { font-size: 2.4rem; font-weight: 800; color: var(--zenlish-blue); }
+</style>
+</head>
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+<div id="app">
+    <div class="brand-header">
+        <div class="brand-title">ZENLISH</div>
+        <div class="brand-subtitle">HỌC TOEIC 1 LẦN LÀ ĐẠT</div>
+    </div>
+    <div class="status-bar" id="status-area" style="display:none;">
+        <span id="stage-title">Ôn Tập Từ Vựng</span>
+        <div>
+            <span id="survival-countdown" style="display:none; margin-right:10px;">5s</span>
+            <span id="timer">00:00</span>
+            <span id="mastery-counter">Đã thuộc: 0/60</span>
+        </div>
+    </div>
+    <div class="progress-container" id="progress-area" style="display:none;"><div class="progress-fill" id="progress"></div></div>
+
+    <!-- LOGIN -->
+    <div id="screen-login" class="screen active" style="text-align:center;">
+        <h3 style="margin-bottom:20px; font-weight:700; font-size:1.4rem; color:var(--zenlish-blue);">Thử thách chinh phục 60 từ vựng công sở</h3>
+        <p style="color:var(--gray); font-size:1rem; margin-bottom:25px; line-height:1.6;">Hành trình ~25-30 phút qua 10 chặng đa dạng: xếp chữ, gõ từ, nghe chép chính tả, nối từ, truyện chêm, dịch câu, đồng nghĩa, đúng/sai, <strong>gõ liên hoàn tốc độ</strong> và tốc biến phản xạ. Bạn cần đạt <strong>ngưỡng thuộc ≥85%</strong> tổng số từ mới được cấp Chứng nhận.</p>
+        <input type="text" id="student-name" placeholder="NHẬP HỌ TÊN CỦA BẠN..." autocomplete="off">
+        <button class="btn-core" onclick="validateLogin()">BẮT ĐẦU ÔN TẬP</button>
+    </div>
+
+    <!-- GAMEPLAY -->
+    <div id="screen-game" class="screen">
+        <div class="badge" id="round-badge">BƯỚC 0: WARM-UP</div>
+
+        <div id="game-flashcard" class="sub-game" style="display:none;">
+            <h3>Khởi động rà soát từ vựng — bấm "Cần ôn thêm" nếu chưa nhớ:</h3>
+            <div class="flashcard-wrapper">
+                <div class="flashcard" id="main-card">
+                    <div class="word" id="fc-word">Word</div>
+                    <div class="ipa" id="fc-ipa">/ipa/</div>
+                    <div class="back-content">
+                        <p id="fc-def" style="font-weight:700; color:var(--zenlish-orange); font-size:1.15rem; margin-bottom:10px;">Định nghĩa</p>
+                        <p id="fc-sentence" style="font-size:0.95rem; font-style:italic; line-height:1.4;">Sentence Context</p>
+                    </div>
+                </div>
+                <div class="fc-actions" id="fc-buttons">
+                    <button class="btn-fc" style="background:var(--zenlish-orange);" onclick="handleFlashcardAction(false)">Cần ôn thêm ❌</button>
+                    <button class="btn-fc" style="background:var(--success);" onclick="handleFlashcardAction(true)">Đã nhớ rõ ➔</button>
+                </div>
+            </div>
+            <p class="fc-status-line" id="fc-status-line"></p>
+        </div>
+
+        <div id="game-scramble" class="sub-game" style="display:none;">
+            <h3>Xếp lại các chữ cái rời rạc thành từ vựng Tiếng Anh chính xác theo ý nghĩa gợi ý:</h3>
+            <p class="hint-line">💡 Gõ bàn phím trực tiếp để nhập nhanh, hoặc click từng ô chữ. Nhấn Backspace để xóa.</p>
+            <div class="scramble-preview" id="scr-preview"></div>
+            <div class="letters-pool" id="scr-pool"></div>
+            <div class="scramble-actions">
+                <button class="btn-scr-action" style="background:var(--zenlish-orange);" onclick="backspaceScrambleLetter()">Xóa chữ vừa chọn ⬅️</button>
+                <button class="btn-scr-action" style="background:var(--gray);" onclick="resetCurrentScramble()">Xóa hết làm lại 🔄</button>
+            </div>
+        </div>
+
+        <div id="game-typeword" class="sub-game" style="display:none;">
+            <h3>Gõ Từ Theo Định Nghĩa — đọc nghĩa Tiếng Việt rồi tự gõ nguyên từ Tiếng Anh:</h3>
+            <div class="type-prompt-box">
+                <div class="def-text" id="tw-def">Định nghĩa</div>
+                <div style="color:var(--gray); font-size:0.9rem;" id="tw-type">[loại từ]</div>
+            </div>
+            <div class="mc-input-row">
+                <input type="text" id="tw-input" class="mc-text-input" placeholder="Gõ từ Tiếng Anh vào đây..." autocomplete="off">
+                <button class="btn-submit-inline" onclick="submitTypeWord()">Kiểm tra</button>
+            </div>
+            <p class="reveal-line" id="tw-reveal"></p>
+        </div>
+
+        <div id="game-listenspell" class="sub-game" style="display:none;">
+            <h3>Nghe – Chép Chính Tả — nghe phát âm rồi gõ lại đúng từ:</h3>
+            <button class="listen-btn" onclick="playListenSpellAudio()">🔊 Nghe từ (bấm lại nếu cần)</button>
+            <p class="hint-line" id="ls-fallback-hint" style="display:none;">Trình duyệt không hỗ trợ đọc — dùng phiên âm để chép chính tả: <strong id="ls-ipa-fallback"></strong></p>
+            <div class="mc-input-row">
+                <input type="text" id="ls-input" class="mc-text-input" placeholder="Gõ lại từ bạn vừa nghe..." autocomplete="off">
+                <button class="btn-submit-inline" onclick="submitListenSpell()">Kiểm tra</button>
+            </div>
+            <p class="reveal-line" id="ls-reveal"></p>
+        </div>
+
+        <div id="game-matching" class="sub-game" style="display:none;">
+            <h3>Chọn 1 từ Tiếng Anh và 1 nghĩa Tiếng Việt chính xác để kết nối. Nối sai sẽ khóa thao tác 0.8s:</h3>
+            <div class="matching-grid" id="match-grid-box"></div>
+        </div>
+
+        <div id="game-story" class="sub-game" style="display:none;">
+            <h3 id="story-title-display">Truyện Số 1:</h3>
+            <div class="story-box" id="story-text-container" ondragover="event.preventDefault();" ondrop="handleStoryBackToPool(event)"></div>
+            <div class="pool-container" id="story-words-pool" ondragover="event.preventDefault();" ondrop="handleStoryBackToPool(event)"></div>
+            <p class="hint-line" id="story-hint">Điền đủ 6 ô trống để nút "Tiếp tục" được mở khóa.</p>
+            <button id="btn-next-global" class="btn-core" style="display:none; margin-top:15px; background:var(--zenlish-orange);" onclick="globalNextStep()" disabled>ĐIỀN ĐỦ 6 Ô ĐỂ TIẾP TỤC</button>
+        </div>
+
+        <div id="game-mc" class="sub-game" style="display:none;">
+            <h3 id="mc-prompt-title">Câu hỏi:</h3>
+            <div id="mc-prompt-body"></div>
+            <div class="opt-grid" id="mc-options-box"></div>
+        </div>
+
+        <div id="game-truefalse" class="sub-game" style="display:none;">
+            <h3>Nhận định dưới đây ĐÚNG hay SAI so với nghĩa thật của từ?</h3>
+            <div class="tf-statement" id="tf-statement"></div>
+            <div class="tf-buttons">
+                <button class="btn-tf true-btn" id="tf-btn-true" onclick="answerTrueFalse(true)">✅ ĐÚNG</button>
+                <button class="btn-tf false-btn" id="tf-btn-false" onclick="answerTrueFalse(false)">❌ SAI</button>
+            </div>
+        </div>
+
+        <div id="game-speedchain" class="sub-game" style="display:none;">
+            <h3>Tốc Độ Gõ Liên Hoàn — gõ nhanh, đúng là tự động chuyển từ kế tiếp ngay lập tức!</h3>
+            <div id="speedchain-timerbar-outer"><div id="speedchain-timerbar-inner"></div></div>
+            <div class="speedchain-box">
+                <div class="combo" id="sc-combo">Combo: 0 | Từ 1/60</div>
+                <div class="def-text" id="sc-def">Định nghĩa</div>
+                <div class="type-text" id="sc-type">[loại từ]</div>
+            </div>
+            <div class="mc-input-row">
+                <input type="text" id="sc-input" class="mc-text-input" placeholder="Gõ ngay từ Tiếng Anh..." autocomplete="off">
+            </div>
+            <p class="reveal-line" id="sc-reveal"></p>
+        </div>
+
+        <div id="game-survival" class="sub-game" style="display:none;">
+            <h3 id="survival-prompt">Phản xạ chớp nhoáng (5 giây/câu):</h3>
+            <div class="opt-grid" id="survival-options-box"></div>
+        </div>
+
+        <div id="game-chotha" class="sub-game" style="display:none;">
+            <h3 id="chotha-title">Chặng Chốt Hạ — rà lại các từ còn yếu:</h3>
+            <div id="chotha-prompt-body" style="text-align:center; font-size:1.15rem; font-weight:700; color:var(--zenlish-blue); margin-bottom:10px;"></div>
+            <div class="opt-grid" id="chotha-options-box"></div>
+        </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="screen-result" class="screen" style="text-align:center;">
+        <div class="celebration-text" id="celebration-title">CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH!</div>
+        <p style="color:var(--gray); font-size:1.05rem; margin-bottom:5px;" id="result-summary"></p>
+        <div class="mastery-box">
+            <div class="mastery-pct" id="mastery-pct-display">0%</div>
+            <div style="color:var(--gray);">tỷ lệ từ vựng đã đạt mức "thuộc"</div>
+        </div>
+        <div class="certificate-container">
+            <canvas id="canvas-cert" width="800" height="550"></canvas>
+            <button class="btn-download" onclick="downloadCertificate()">📥 TẢI CHỨNG NHẬN ĐIỆN TỬ</button>
+        </div>
+        <div class="end-actions">
+            <button class="btn-alt" style="background:var(--zenlish-blue);" onclick="toggleTheorySection()">📖 XEM SỔ TAY TỪ VỰNG</button>
+            <button class="btn-alt" onclick="restartQuiz()">🔄 LÀM LẠI BÀI TẬP ĐỂ KHẮC SÂU</button>
+        </div>
+        <div class="review-section" id="review-box">
+            <h3 style="border-bottom:2px solid var(--zenlish-blue); padding-bottom:8px; margin-bottom:10px;">Danh mục trọn bộ từ vựng bài học</h3>
+            <div id="review-list-content"></div>
+        </div>
+    </div>
+</div>
+<script>
+// ==================== DATASET: 60 TỪ VỰNG CÔNG SỞ ====================
+const vocabDataset = [
+    { word: "purchase order", type: "n phrase", ipa: "/ˈpɝː.tʃəs ˈɔːr.dɚ/", definition: "đơn đặt hàng", synonym: "buying request form", sentence: "The warehouse manager submitted a _______ for new packaging materials.", trans: "Người quản lý kho đã gửi một đơn đặt hàng cho vật liệu đóng gói mới." },
+    { word: "sign", type: "v", ipa: "/saɪn/", definition: "ký tên", synonym: "put your signature", sentence: "Please _______ the agreement before the end of the day.", trans: "Vui lòng ký tên vào thỏa thuận trước cuối ngày." },
+    { word: "loan application", type: "n phrase", ipa: "/loʊn ˌæp.ləˈkeɪ.ʃən/", definition: "đơn xin vay vốn", synonym: "credit request form", sentence: "The bank approved her _______ within two weeks.", trans: "Ngân hàng đã phê duyệt đơn xin vay vốn của cô ấy trong vòng hai tuần." },
+    { word: "labor cost", type: "n phrase", ipa: "/ˈleɪ.bɚ kɑːst/", definition: "chi phí nhân công", synonym: "workforce expense", sentence: "Automating the assembly line helped reduce _______ significantly.", trans: "Tự động hóa dây chuyền lắp ráp đã giúp giảm đáng kể chi phí nhân công." },
+    { word: "significantly", type: "adv", ipa: "/sɪɡˈnɪf.ə.kənt.li/", definition: "một cách đáng kể", synonym: "considerably", sentence: "Revenue increased _______ after the new marketing campaign launched.", trans: "Doanh thu đã tăng một cách đáng kể sau khi chiến dịch marketing mới được triển khai." },
+    { word: "profit", type: "n, v", ipa: "/ˈprɑː.fɪt/", definition: "lợi nhuận; thu lợi", synonym: "financial gain", sentence: "The company reported a record _______ this quarter.", trans: "Công ty đã báo cáo mức lợi nhuận kỷ lục trong quý này." },
+    { word: "storage facility", type: "n phrase", ipa: "/ˈstɔːr.ɪdʒ fəˈsɪl.ə.t̬i/", definition: "cơ sở lưu trữ, nhà kho", synonym: "warehouse space", sentence: "The company rented a new _______ to hold extra inventory.", trans: "Công ty đã thuê một cơ sở lưu trữ mới để chứa hàng tồn kho dư thừa." },
+    { word: "practical cooking tips", type: "n phrase", ipa: "/ˈpræk.tɪ.kəl ˈkʊk.ɪŋ tɪps/", definition: "mẹo nấu ăn thực tế", synonym: "useful kitchen advice", sentence: "The cooking show offers _______ for busy professionals.", trans: "Chương trình nấu ăn cung cấp những mẹo nấu ăn thực tế cho người bận rộn." },
+    { word: "personnel department", type: "n phrase", ipa: "/ˌpɝː.sənˈel dɪˈpɑːrt.mənt/", definition: "phòng nhân sự", synonym: "human resources office", sentence: "New hires must complete paperwork with the _______.", trans: "Nhân viên mới phải hoàn tất giấy tờ với phòng nhân sự." },
+    { word: "revise", type: "v", ipa: "/rɪˈvaɪz/", definition: "chỉnh sửa, duyệt lại", synonym: "edit or update", sentence: "The editor asked the writer to _______ the report before submission.", trans: "Biên tập viên đã yêu cầu tác giả chỉnh sửa báo cáo trước khi nộp." },
+    { word: "vacation policy", type: "n phrase", ipa: "/veɪˈkeɪ.ʃən ˈpɑː.lə.si/", definition: "chính sách nghỉ phép", synonym: "time-off rules", sentence: "The company updated its _______ to allow more flexible time off.", trans: "Công ty đã cập nhật chính sách nghỉ phép để cho phép nghỉ linh hoạt hơn." },
+    { word: "confusing", type: "adj", ipa: "/kənˈfjuː.zɪŋ/", definition: "khó hiểu, gây bối rối", synonym: "unclear or puzzling", sentence: "Employees found the new instructions rather _______.", trans: "Nhân viên thấy hướng dẫn mới khá khó hiểu." },
+    { word: "corporate advertising", type: "n phrase", ipa: "/ˈkɔːr.pɚ.ət ˈæd.vɚ.taɪ.zɪŋ/", definition: "quảng cáo doanh nghiệp", synonym: "company promotion", sentence: "The firm increased its budget for _______ this year.", trans: "Công ty đã tăng ngân sách cho quảng cáo doanh nghiệp trong năm nay." },
+    { word: "tenant", type: "n", ipa: "/ˈten.ənt/", definition: "người thuê nhà, người thuê văn phòng", synonym: "renter or lessee", sentence: "The building owner met with each _______ about the rent increase.", trans: "Chủ tòa nhà đã gặp từng người thuê văn phòng về việc tăng tiền thuê." },
+    { word: "musical instrument", type: "n phrase", ipa: "/ˈmjuː.zɪ.kəl ˈɪn.strə.mənt/", definition: "nhạc cụ", synonym: "instrument for music", sentence: "The store sells a wide variety of _______.", trans: "Cửa hàng bán rất nhiều loại nhạc cụ khác nhau." },
+    { word: "disturb", type: "v", ipa: "/dɪˈstɝːb/", definition: "làm phiền, quấy rầy", synonym: "interrupt or bother", sentence: "Please do not _______ the meeting in progress.", trans: "Vui lòng không làm phiền cuộc họp đang diễn ra." },
+    { word: "resident", type: "n", ipa: "/ˈrez.ə.dənt/", definition: "cư dân", synonym: "inhabitant", sentence: "Every _______ received a notice about the water shutoff.", trans: "Mỗi cư dân đã nhận được thông báo về việc cắt nước." },
+    { word: "receipt", type: "n", ipa: "/rɪˈsiːt/", definition: "biên lai, sự nhận được", synonym: "proof of purchase", sentence: "Keep your _______ in case you need a refund.", trans: "Hãy giữ biên lai của bạn trong trường hợp cần hoàn tiền." },
+    { word: "business trip", type: "n phrase", ipa: "/ˈbɪz.nɪs trɪp/", definition: "chuyến công tác", synonym: "work travel", sentence: "She is preparing for a _______ to the Tokyo office.", trans: "Cô ấy đang chuẩn bị cho một chuyến công tác đến văn phòng Tokyo." },
+    { word: "process", type: "v", ipa: "/ˈprɑː.ses/", definition: "xử lý", synonym: "handle or carry out", sentence: "The bank will _______ your application within five days.", trans: "Ngân hàng sẽ xử lý đơn của bạn trong vòng năm ngày." },
+    { word: "convention", type: "n", ipa: "/kənˈven.ʃən/", definition: "hội nghị", synonym: "large formal conference", sentence: "Thousands of professionals attended the industry _______.", trans: "Hàng ngàn chuyên gia đã tham dự hội nghị của ngành." },
+    { word: "construction", type: "n", ipa: "/kənˈstrʌk.ʃən/", definition: "sự xây dựng, công trình", synonym: "building process", sentence: "The _______ of the new bridge will take two years.", trans: "Việc xây dựng cây cầu mới sẽ mất hai năm." },
+    { word: "bidder", type: "n", ipa: "/ˈbɪd.ɚ/", definition: "người dự thầu, người trả giá", synonym: "auction participant", sentence: "The highest _______ won the contract for the project.", trans: "Người trả giá cao nhất đã giành được hợp đồng cho dự án." },
+    { word: "manuscript", type: "n", ipa: "/ˈmæn.jə.skrɪpt/", definition: "bản thảo", synonym: "unpublished draft", sentence: "The publisher reviewed the author's _______ carefully.", trans: "Nhà xuất bản đã xem xét bản thảo của tác giả một cách cẩn thận." },
+    { word: "outreach effort", type: "n phrase", ipa: "/ˈaʊt.riːtʃ ˈef.ɚt/", definition: "nỗ lực tiếp cận cộng đồng", synonym: "community engagement drive", sentence: "The nonprofit launched an _______ to raise awareness in rural areas.", trans: "Tổ chức phi lợi nhuận đã triển khai một nỗ lực tiếp cận cộng đồng để nâng cao nhận thức ở vùng nông thôn." },
+    { word: "fund-raising event", type: "n phrase", ipa: "/ˈfʌndˌreɪ.zɪŋ ɪˈvent/", definition: "sự kiện gây quỹ", synonym: "donation drive", sentence: "The charity organized a _______ to support local schools.", trans: "Tổ chức từ thiện đã tổ chức một sự kiện gây quỹ để hỗ trợ các trường học địa phương." },
+    { word: "author", type: "n, v", ipa: "/ˈɑː.θɚ/", definition: "tác giả; viết (sách)", synonym: "writer", sentence: "The _______ signed copies of her new novel at the bookstore.", trans: "Tác giả đã ký tặng sách mới của mình tại hiệu sách." },
+    { word: "marketing material", type: "n phrase", ipa: "/ˈmɑːr.kɪ.t̬ɪŋ məˈtɪr.i.əl/", definition: "tài liệu tiếp thị", synonym: "promotional content", sentence: "The design team prepared new _______ for the product launch.", trans: "Đội ngũ thiết kế đã chuẩn bị tài liệu tiếp thị mới cho buổi ra mắt sản phẩm." },
+    { word: "expo", type: "n", ipa: "/ˈek.spoʊ/", definition: "hội chợ triển lãm", synonym: "trade exhibition", sentence: "The company showcased its products at the international _______.", trans: "Công ty đã trưng bày sản phẩm của mình tại hội chợ triển lãm quốc tế." },
+    { word: "business plan", type: "n phrase", ipa: "/ˈbɪz.nɪs plæn/", definition: "kế hoạch kinh doanh", synonym: "company strategy document", sentence: "Investors asked to see a detailed _______ before funding the startup.", trans: "Các nhà đầu tư yêu cầu xem một kế hoạch kinh doanh chi tiết trước khi tài trợ cho công ty khởi nghiệp." },
+    { word: "idea", type: "n", ipa: "/aɪˈdiː.ə/", definition: "ý tưởng", synonym: "concept or notion", sentence: "She shared an innovative _______ during the brainstorming session.", trans: "Cô ấy đã chia sẻ một ý tưởng sáng tạo trong buổi họp brainstorm." },
+    { word: "impressive", type: "adj", ipa: "/ɪmˈpres.ɪv/", definition: "ấn tượng", synonym: "remarkable", sentence: "The candidate's presentation was truly _______.", trans: "Bài thuyết trình của ứng viên thực sự rất ấn tượng." },
+    { word: "renovation", type: "n", ipa: "/ˌren.əˈveɪ.ʃən/", definition: "sự cải tạo, nâng cấp", synonym: "remodeling", sentence: "The office building is undergoing a major _______.", trans: "Tòa nhà văn phòng đang trải qua một đợt cải tạo lớn." },
+    { word: "recognize", type: "v", ipa: "/ˈrek.əɡ.naɪz/", definition: "công nhận, nhận ra", synonym: "acknowledge achievement", sentence: "The company plans to _______ top-performing employees at the ceremony.", trans: "Công ty có kế hoạch công nhận những nhân viên xuất sắc tại buổi lễ." },
+    { word: "respond to", type: "phr v", ipa: "/rɪˈspɑːnd tu/", definition: "phản hồi, đáp lại", synonym: "reply to", sentence: "The support team is trained to _______ customer complaints quickly.", trans: "Đội ngũ hỗ trợ được đào tạo để phản hồi khiếu nại của khách hàng một cách nhanh chóng." },
+    { word: "competent employee", type: "n phrase", ipa: "/ˈkɑːm.pə.t̬ənt ɪmˈplɔɪ.iː/", definition: "nhân viên thạo việc/có năng lực", synonym: "capable staff member", sentence: "The manager relies heavily on her most _______.", trans: "Người quản lý dựa rất nhiều vào nhân viên thạo việc nhất của mình." },
+    { word: "individual interest", type: "n phrase", ipa: "/ˌɪn.dəˈvɪdʒ.u.əl ˈɪn.trəst/", definition: "sở thích/mối quan tâm cá nhân", synonym: "personal preference", sentence: "The workshop schedule was designed around each participant's _______.", trans: "Lịch trình hội thảo được thiết kế dựa trên sở thích cá nhân của từng người tham gia." },
+    { word: "grand opening", type: "n phrase", ipa: "/ɡrænd ˈoʊ.pən.ɪŋ/", definition: "lễ khai trương", synonym: "official launch event", sentence: "Hundreds of customers attended the store's _______.", trans: "Hàng trăm khách hàng đã tham dự lễ khai trương của cửa hàng." },
+    { word: "representative", type: "n", ipa: "/ˌrep.rɪˈzen.t̬ə.tɪv/", definition: "người đại diện", synonym: "agent or delegate", sentence: "A sales _______ will contact you shortly.", trans: "Một người đại diện bán hàng sẽ liên hệ với bạn trong thời gian ngắn." },
+    { word: "responsibility", type: "n", ipa: "/rɪˌspɑːn.səˈbɪl.ə.t̬i/", definition: "trách nhiệm", synonym: "duty or obligation", sentence: "Handling customer complaints is now his main _______.", trans: "Xử lý khiếu nại của khách hàng giờ đây là trách nhiệm chính của anh ấy." },
+    { word: "inform", type: "v", ipa: "/ɪnˈfɔːrm/", definition: "thông báo", synonym: "notify", sentence: "Please _______ the team about the schedule change.", trans: "Vui lòng thông báo cho nhóm về sự thay đổi lịch trình." },
+    { word: "technology stock", type: "n phrase", ipa: "/tekˈnɑː.lə.dʒi stɑːk/", definition: "cổ phiếu công nghệ", synonym: "tech company shares", sentence: "Investors showed strong interest in _______ this year.", trans: "Các nhà đầu tư đã thể hiện sự quan tâm mạnh mẽ đến cổ phiếu công nghệ trong năm nay." },
+    { word: "investment", type: "n", ipa: "/ɪnˈvest.mənt/", definition: "sự đầu tư, khoản đầu tư", synonym: "financial commitment", sentence: "The firm made a large _______ in renewable energy.", trans: "Công ty đã thực hiện một khoản đầu tư lớn vào năng lượng tái tạo." },
+    { word: "remind", type: "v", ipa: "/rɪˈmaɪnd/", definition: "nhắc nhở", synonym: "prompt to remember", sentence: "The assistant will _______ you of the meeting an hour beforehand.", trans: "Trợ lý sẽ nhắc nhở bạn về cuộc họp một giờ trước đó." },
+    { word: "venue", type: "n", ipa: "/ˈven.juː/", definition: "địa điểm tổ chức (sự kiện)", synonym: "event location", sentence: "The conference _______ was changed due to renovations.", trans: "Địa điểm tổ chức hội nghị đã được thay đổi do việc cải tạo." },
+    { word: "tournament", type: "n", ipa: "/ˈtʊr.nə.mənt/", definition: "giải đấu", synonym: "competition series", sentence: "The company sponsors an annual golf _______ for clients.", trans: "Công ty tài trợ một giải đấu golf thường niên cho khách hàng." },
+    { word: "advertising campaign", type: "n phrase", ipa: "/ˈæd.vɚ.taɪ.zɪŋ kæmˈpeɪn/", definition: "chiến dịch quảng cáo", synonym: "promotional push", sentence: "The brand launched a bold new _______ this spring.", trans: "Thương hiệu đã ra mắt một chiến dịch quảng cáo mới táo bạo vào mùa xuân này." },
+    { word: "praise", type: "n, v", ipa: "/preɪz/", definition: "lời khen ngợi; khen ngợi", synonym: "commendation", sentence: "The manager gave the team high _______ for their performance.", trans: "Người quản lý đã dành lời khen ngợi cao cho hiệu suất làm việc của đội." },
+    { word: "unique", type: "adj", ipa: "/juːˈniːk/", definition: "độc đáo, duy nhất", synonym: "one of a kind", sentence: "The product's _______ design set it apart from competitors.", trans: "Thiết kế độc đáo của sản phẩm khiến nó khác biệt so với đối thủ cạnh tranh." },
+    { word: "encourage", type: "v", ipa: "/ɪnˈkɝː.ɪdʒ/", definition: "khuyến khích, động viên", synonym: "motivate", sentence: "Managers should _______ employees to share new ideas.", trans: "Người quản lý nên khuyến khích nhân viên chia sẻ những ý tưởng mới." },
+    { word: "corporation", type: "n", ipa: "/ˌkɔːr.pəˈreɪ.ʃən/", definition: "tập đoàn, công ty", synonym: "large business entity", sentence: "The multinational _______ operates in over fifty countries.", trans: "Tập đoàn đa quốc gia này hoạt động ở hơn năm mươi quốc gia." },
+    { word: "take place", type: "phr v", ipa: "/teɪk pleɪs/", definition: "diễn ra", synonym: "happen or occur", sentence: "The annual meeting will _______ next Friday afternoon.", trans: "Cuộc họp thường niên sẽ diễn ra vào chiều thứ Sáu tới." },
+    { word: "slight drop", type: "n phrase", ipa: "/slaɪt drɑːp/", definition: "sự sụt giảm nhẹ", synonym: "small decrease", sentence: "The report showed a _______ in customer satisfaction this month.", trans: "Báo cáo cho thấy một sự sụt giảm nhẹ về mức độ hài lòng của khách hàng trong tháng này." },
+    { word: "currency", type: "n", ipa: "/ˈkɝː.ən.si/", definition: "tiền tệ", synonym: "monetary unit", sentence: "The exchange rate between the two _______ fluctuated last week.", trans: "Tỷ giá hối đoái giữa hai loại tiền tệ đã biến động vào tuần trước." },
+    { word: "acquisition", type: "n", ipa: "/ˌæk.wəˈzɪʃ.ən/", definition: "sự thâu tóm, mua lại", synonym: "company takeover", sentence: "The tech giant announced the _______ of a small startup.", trans: "Gã khổng lồ công nghệ đã công bố việc thâu tóm một công ty khởi nghiệp nhỏ." },
+    { word: "foreign firm", type: "n phrase", ipa: "/ˈfɔːr.ən fɝːm/", definition: "công ty nước ngoài", synonym: "overseas business", sentence: "A _______ agreed to invest in the local factory.", trans: "Một công ty nước ngoài đã đồng ý đầu tư vào nhà máy địa phương." },
+    { word: "drastic change", type: "n phrase", ipa: "/ˈdræs.tɪk tʃeɪndʒ/", definition: "sự thay đổi mạnh mẽ/quyết liệt", synonym: "radical shift", sentence: "The new CEO introduced _______ to the company's structure.", trans: "Vị CEO mới đã đưa ra sự thay đổi mạnh mẽ đối với cơ cấu công ty." },
+    { word: "negotiation", type: "n", ipa: "/nəˌɡoʊ.ʃiˈeɪ.ʃən/", definition: "sự đàm phán, thương lượng", synonym: "bargaining process", sentence: "The _______ between the two companies lasted several months.", trans: "Cuộc đàm phán giữa hai công ty đã kéo dài nhiều tháng." },
+    { word: "reach an agreement", type: "phrase", ipa: "/riːtʃ ən əˈɡriː.mənt/", definition: "đạt được thỏa thuận", synonym: "come to terms", sentence: "After hours of discussion, both sides finally _______.", trans: "Sau nhiều giờ thảo luận, cả hai bên cuối cùng đã đạt được thỏa thuận." },
+    { word: "economic recovery", type: "n phrase", ipa: "/ˌiː.kəˈnɑː.mɪk rɪˈkʌv.ɚ.i/", definition: "sự phục hồi kinh tế", synonym: "financial rebound", sentence: "Analysts predict a strong _______ next year.", trans: "Các nhà phân tích dự đoán một sự phục hồi kinh tế mạnh mẽ vào năm tới." }
+];
+
+// ==================== 3 TRUYỆN CHÊM CỐ ĐỊNH (18 từ) ====================
+const STORIES = [
+    {
+        title: "Truyện 1: Văn phòng & Nhân sự",
+        words: ["personnel department", "vacation policy", "competent employee", "responsibility", "inform", "remind"],
+        html: `Ngay khi gia nhập công ty, mọi nhân viên mới đều phải làm việc với <span class="drop-zone" data-slot-id="0" data-expected="personnel department" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> để hoàn tất hồ sơ. Công ty cũng phổ biến rõ <span class="drop-zone" data-slot-id="1" data-expected="vacation policy" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> để nhân viên nắm được số ngày nghỉ phép được hưởng. Ban giám đốc luôn đánh giá cao những <span class="drop-zone" data-slot-id="2" data-expected="competent employee" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> biết chủ động trong công việc. Mỗi người đều được giao <span class="drop-zone" data-slot-id="3" data-expected="responsibility" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> cụ thể ngay từ tuần đầu tiên. Quản lý trực tiếp sẽ <span class="drop-zone" data-slot-id="4" data-expected="inform" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> cả nhóm về bất kỳ thay đổi nào, đồng thời thường xuyên <span class="drop-zone" data-slot-id="5" data-expected="remind" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> mọi người về các mốc thời hạn quan trọng.`
+    },
+    {
+        title: "Truyện 2: Kinh doanh & Đầu tư",
+        words: ["business plan", "investment", "negotiation", "reach an agreement", "acquisition", "economic recovery"],
+        html: `Trước khi kêu gọi vốn, nhà sáng lập phải chuẩn bị một <span class="drop-zone" data-slot-id="0" data-expected="business plan" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> thật chi tiết và thuyết phục. Sau nhiều buổi gặp gỡ, quỹ đầu tư quyết định rót một khoản <span class="drop-zone" data-slot-id="1" data-expected="investment" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> đáng kể vào công ty. Quá trình <span class="drop-zone" data-slot-id="2" data-expected="negotiation" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> giữa hai bên kéo dài gần một tháng trước khi họ <span class="drop-zone" data-slot-id="3" data-expected="reach an agreement" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> cuối cùng. Không lâu sau, công ty tiếp tục công bố một thương vụ <span class="drop-zone" data-slot-id="4" data-expected="acquisition" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> với một startup công nghệ nhỏ. Giới phân tích nhận định đây là tín hiệu tích cực cho <span class="drop-zone" data-slot-id="5" data-expected="economic recovery" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> của toàn ngành.`
+    },
+    {
+        title: "Truyện 3: Sự kiện & Marketing",
+        words: ["grand opening", "advertising campaign", "marketing material", "fund-raising event", "venue", "expo"],
+        html: `Cửa hàng flagship mới sẽ tổ chức một buổi <span class="drop-zone" data-slot-id="0" data-expected="grand opening" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> hoành tráng vào cuối tháng này. Để chuẩn bị, đội marketing đã lên kế hoạch cho một <span class="drop-zone" data-slot-id="1" data-expected="advertising campaign" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> rầm rộ trên nhiều kênh khác nhau. Họ cũng thiết kế lại toàn bộ <span class="drop-zone" data-slot-id="2" data-expected="marketing material" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> để đồng bộ với hình ảnh thương hiệu mới. Song song đó, công ty còn tài trợ cho một <span class="drop-zone" data-slot-id="3" data-expected="fund-raising event" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> nhằm gắn kết với cộng đồng địa phương. Đội ngũ sự kiện cũng đang tìm kiếm <span class="drop-zone" data-slot-id="4" data-expected="venue" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> phù hợp cho buổi tham gia <span class="drop-zone" data-slot-id="5" data-expected="expo" ondragover="event.preventDefault();" ondrop="handleStoryDrop(event, this)"></span> ngành bán lẻ vào quý sau.`
+    }
+];
+function getStoryWordsFlat() { return STORIES.flatMap(s => s.words); }
+function honestyShuffle(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
+function splitIntoBuckets(arr, n) {
+    let shuffled = honestyShuffle(arr);
+    let buckets = Array.from({ length: n }, () => []);
+    shuffled.forEach((item, idx) => buckets[idx % n].push(item));
+    return buckets;
+}
+
+// ==================== STATE ====================
+let studentName = "";
+let elapsedSeconds = 0, timerInterval = null;
+let currentSubGame = "";
+let masteryRecord = {}; // word -> {attempts:[bool], chotha:null|bool}
+let totalUnits = 0, doneUnits = 0;
+
+let scrambleSubset = [], typeWordSubset = [], listenSpellSubset = [];
+let translationSubset = [], synonymSubset = [], truefalseSubset = [];
+
+let fcQueue = [], fcTotal = 0, fcFlipTimeout;
+let scrambleIdx = 0, scrambleSelectedLetters = [], scrambleHistoryTiles = [], scrambleKeyHandler = null;
+let typeWordIdx = 0;
+let listenSpellIdx = 0;
+let matchRounds = [], matchRoundIdx = 0, matchSelectedId = null;
+let currentStoryId = 1, storyAnswers = {};
+let translationIdx = 0;
+let synonymIdx = 0;
+let truefalseIdx = 0, truefalseCurrentItem = null, truefalseCurrentAnswer = null;
+let speedchainQueue = [], speedchainIdx = 0, speedchainCombo = 0, speedchainTimer = null, speedchainMsLeft = 0, speedchainPerWordMs = 6000;
+let survivalQueue = [], survivalIdx = 0, survivalTimer = null, survivalSecs = 5;
+let chothaQueue = [], chothaIdx = 0, chothaRoundNum = 0;
+
+function setProgress(val) { document.getElementById("progress").style.width = Math.min(100, Math.round(val)) + "%"; }
+function incrementDone(n = 1) { doneUnits += n; setProgress((doneUnits / totalUnits) * 100); }
+function recordAttempt(word, isCorrect) { masteryRecord[word].attempts.push(isCorrect); updateMasteryCounter(); }
+function isWordMastered(word) {
+    let r = masteryRecord[word];
+    if (!r) return false;
+    if (r.chotha === true) return true;
+    if (r.attempts.length === 0) return false;
+    return (r.attempts.filter(Boolean).length / r.attempts.length) > 0.5;
+}
+function updateMasteryCounter() {
+    let mastered = Object.keys(masteryRecord).filter(isWordMastered).length;
+    document.getElementById("mastery-counter").innerText = `Đã thuộc: ${mastered}/${vocabDataset.length}`;
+}
+
+function validateLogin() {
+    let input = document.getElementById("student-name").value.trim();
+    if (!input) { alert("Vui lòng điền họ và tên!"); return; }
+    studentName = input.toUpperCase();
+    document.getElementById("screen-login").classList.remove("active");
+    document.getElementById("screen-game").classList.add("active");
+    document.getElementById("status-area").style.display = "flex";
+    document.getElementById("progress-area").style.display = "block";
+    resetStateAndStart();
+}
+function resetStateAndStart() {
+    masteryRecord = {};
+    vocabDataset.forEach(v => { masteryRecord[v.word] = { attempts: [], chotha: null }; });
+    chothaRoundNum = 0;
+
+    let storySet = new Set(getStoryWordsFlat());
+    let singleNonStory = vocabDataset.filter(v => !v.word.includes(' ') && !storySet.has(v.word));
+    let phraseNonStory = vocabDataset.filter(v => v.word.includes(' ') && !storySet.has(v.word));
+    [scrambleSubset, typeWordSubset, listenSpellSubset] = splitIntoBuckets(singleNonStory, 3);
+    [translationSubset, synonymSubset, truefalseSubset] = splitIntoBuckets(phraseNonStory, 3);
+
+    totalUnits = vocabDataset.length /*flashcard*/ + scrambleSubset.length + typeWordSubset.length + listenSpellSubset.length
+        + vocabDataset.length /*matching*/ + getStoryWordsFlat().length + translationSubset.length + synonymSubset.length
+        + truefalseSubset.length + vocabDataset.length /*speedchain*/ + vocabDataset.length /*survival*/;
+    doneUnits = 0;
+    setProgress(0);
+    updateMasteryCounter();
+    startStopwatch();
+    runFlashcardStage();
+}
+function startStopwatch() {
+    clearInterval(timerInterval); elapsedSeconds = 0;
+    timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        let m = Math.floor(elapsedSeconds / 60), s = elapsedSeconds % 60;
+        document.getElementById("timer").innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+function hideAllSubGames() {
+    document.querySelectorAll('.sub-game').forEach(g => g.style.display = 'none');
+    document.getElementById("survival-countdown").style.display = 'none';
+    clearInterval(survivalTimer);
+    clearInterval(speedchainTimer);
+    clearTimeout(fcFlipTimeout);
+    if (scrambleKeyHandler) { document.removeEventListener('keydown', scrambleKeyHandler); scrambleKeyHandler = null; }
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    let nextBtn = document.getElementById("btn-next-global");
+    if (nextBtn) { nextBtn.style.display = 'none'; nextBtn.disabled = true; }
+}
+
+// ==================== BƯỚC 0: FLASHCARD ====================
+function runFlashcardStage() {
+    hideAllSubGames();
+    currentSubGame = "flashcard";
+    document.getElementById("game-flashcard").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 0: Warm-up";
+    document.getElementById("round-badge").innerText = "BƯỚC 0: FLASHCARD TỔNG QUAN";
+    fcQueue = honestyShuffle(vocabDataset);
+    fcTotal = fcQueue.length;
+    showFlashcard();
+}
+function showFlashcard() {
+    if (fcQueue.length === 0) { runScrambleStage(); return; }
+    document.getElementById("fc-status-line").innerText = `Còn ${fcQueue.length}/${fcTotal} từ cần rà soát trong vòng này`;
+    clearTimeout(fcFlipTimeout);
+    let card = document.getElementById("main-card");
+    card.classList.remove("flipped");
+    document.getElementById("fc-buttons").style.display = "none";
+    let data = fcQueue[0];
+    document.getElementById("fc-word").innerHTML = `${data.word} <span style="font-size:1.05rem; color:var(--zenlish-orange)">(${data.type})</span>`;
+    document.getElementById("fc-ipa").innerText = data.ipa;
+    document.getElementById("fc-def").innerText = data.definition;
+    document.getElementById("fc-sentence").innerText = `Context: ${data.sentence}`;
+    fcFlipTimeout = setTimeout(() => {
+        card.classList.add("flipped");
+        document.getElementById("fc-buttons").style.display = "grid";
+    }, 600);
+}
+function handleFlashcardAction(isEasy) {
+    let currentItem = fcQueue.shift();
+    if (isEasy) { incrementDone(1); showFlashcard(); }
+    else { fcQueue.push(currentItem); showFlashcard(); }
+}
+
+// ==================== CHẶNG 1: SCRAMBLE ====================
+function runScrambleStage() {
+    hideAllSubGames();
+    currentSubGame = "scramble";
+    document.getElementById("game-scramble").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 1: Xếp Chữ Cái";
+    scrambleIdx = 0;
+    attachScrambleKeyboard();
+    showScrambleQuestion();
+}
+function attachScrambleKeyboard() {
+    if (scrambleKeyHandler) document.removeEventListener('keydown', scrambleKeyHandler);
+    scrambleKeyHandler = (e) => {
+        if (currentSubGame !== "scramble") return;
+        if (e.key === 'Backspace') { e.preventDefault(); backspaceScrambleLetter(); return; }
+        let letter = e.key.toLowerCase();
+        if (!/^[a-z]$/.test(letter)) return;
+        let tiles = document.querySelectorAll('.letter-tile:not(.selected)');
+        for (let t of tiles) { if (t.innerText.toLowerCase() === letter) { t.click(); break; } }
+    };
+    document.addEventListener('keydown', scrambleKeyHandler);
+}
+function showScrambleQuestion() {
+    if (scrambleIdx >= scrambleSubset.length) { runTypeWordStage(); return; }
+    scrambleSelectedLetters = []; scrambleHistoryTiles = [];
+    let item = scrambleSubset[scrambleIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 1: WORD SCRAMBLE (${scrambleIdx + 1}/${scrambleSubset.length})`;
+    document.getElementById("scr-preview").innerText = "";
+    document.getElementById("scr-preview").style.color = "var(--zenlish-blue)";
+    let cleanWord = item.word.replace(/[^a-zA-Z]/g, '');
+    let letters = honestyShuffle(cleanWord.split(""));
+    let poolBox = document.getElementById("scr-pool");
+    poolBox.innerHTML = `<h3>Gợi ý nghĩa: ${item.definition} [${item.type}]</h3>`;
+    letters.forEach((l, idx) => {
+        let tile = document.createElement("button");
+        tile.className = "letter-tile"; tile.innerText = l; tile.id = `scr-tile-${idx}`;
+        tile.onclick = () => {
+            scrambleSelectedLetters.push(l); scrambleHistoryTiles.push(tile.id);
+            tile.classList.add("selected");
+            document.getElementById("scr-preview").innerText = scrambleSelectedLetters.join("");
+            if (scrambleSelectedLetters.length === cleanWord.length) {
+                let isCorrect = scrambleSelectedLetters.join("") === cleanWord;
+                recordAttempt(item.word, isCorrect);
+                document.getElementById("scr-preview").style.color = isCorrect ? "var(--success)" : "var(--danger)";
+                if (!isCorrect) {
+                    document.getElementById("scr-pool").insertAdjacentHTML('beforeend', `<p style="width:100%; text-align:center; color:var(--danger); font-weight:bold; margin-top:8px;">Đáp án đúng: ${cleanWord.toUpperCase()}</p>`);
+                }
+                incrementDone(1);
+                setTimeout(() => { scrambleIdx++; showScrambleQuestion(); }, isCorrect ? 600 : 1300);
+            }
+        };
+        poolBox.appendChild(tile);
+    });
+}
+function backspaceScrambleLetter() {
+    if (scrambleSelectedLetters.length === 0) return;
+    let lastTileId = scrambleHistoryTiles.pop();
+    let btn = document.getElementById(lastTileId);
+    if (btn) btn.classList.remove("selected");
+    scrambleSelectedLetters.pop();
+    document.getElementById("scr-preview").innerText = scrambleSelectedLetters.join("");
+}
+function resetCurrentScramble() {
+    scrambleSelectedLetters = []; scrambleHistoryTiles = [];
+    document.getElementById("scr-preview").innerText = "";
+    document.getElementById("scr-preview").style.color = "var(--zenlish-blue)";
+    document.querySelectorAll(".letter-tile").forEach(t => t.classList.remove("selected"));
+}
+
+// ==================== CHẶNG 2: TYPE WORD ====================
+function runTypeWordStage() {
+    hideAllSubGames();
+    currentSubGame = "typeword";
+    document.getElementById("game-typeword").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 2: Gõ Từ Theo Định Nghĩa";
+    typeWordIdx = 0;
+    showTypeWordQuestion();
+}
+function showTypeWordQuestion() {
+    if (typeWordIdx >= typeWordSubset.length) { runListenSpellStage(); return; }
+    let item = typeWordSubset[typeWordIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 2: TYPE THE WORD (${typeWordIdx + 1}/${typeWordSubset.length})`;
+    document.getElementById("tw-def").innerText = item.definition;
+    document.getElementById("tw-type").innerText = `[${item.type}]`;
+    let input = document.getElementById("tw-input");
+    input.value = ""; input.classList.remove("correct-input", "wrong-input"); input.disabled = false;
+    document.getElementById("tw-reveal").innerText = "";
+    input.onkeydown = (e) => { if (e.key === "Enter") submitTypeWord(); };
+    input.focus();
+}
+function submitTypeWord() {
+    if (typeWordIdx >= typeWordSubset.length) return;
+    let item = typeWordSubset[typeWordIdx];
+    let input = document.getElementById("tw-input");
+    if (input.disabled) return;
+    input.disabled = true;
+    let isCorrect = input.value.trim().toLowerCase() === item.word.toLowerCase();
+    recordAttempt(item.word, isCorrect);
+    input.classList.add(isCorrect ? "correct-input" : "wrong-input");
+    document.getElementById("tw-reveal").innerHTML = isCorrect
+        ? `<span style="color:var(--success)">Chính xác! ✅</span>`
+        : `<span style="color:var(--danger)">Chưa đúng — đáp án là: <u>${item.word}</u></span>`;
+    incrementDone(1);
+    setTimeout(() => { typeWordIdx++; showTypeWordQuestion(); }, isCorrect ? 700 : 1400);
+}
+
+// ==================== CHẶNG 3: LISTEN & SPELL ====================
+let speechSupported = ('speechSynthesis' in window);
+function runListenSpellStage() {
+    hideAllSubGames();
+    currentSubGame = "listenspell";
+    document.getElementById("game-listenspell").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 3: Nghe – Chép Chính Tả";
+    listenSpellIdx = 0;
+    showListenSpellQuestion();
+}
+function showListenSpellQuestion() {
+    if (listenSpellIdx >= listenSpellSubset.length) { runMatchingStage(); return; }
+    let item = listenSpellSubset[listenSpellIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 3: LISTEN & SPELL (${listenSpellIdx + 1}/${listenSpellSubset.length})`;
+    let input = document.getElementById("ls-input");
+    input.value = ""; input.classList.remove("correct-input", "wrong-input"); input.disabled = false;
+    document.getElementById("ls-reveal").innerText = "";
+    input.onkeydown = (e) => { if (e.key === "Enter") submitListenSpell(); };
+    let fallbackHint = document.getElementById("ls-fallback-hint");
+    if (speechSupported) { fallbackHint.style.display = 'none'; playListenSpellAudio(); }
+    else { fallbackHint.style.display = 'block'; document.getElementById("ls-ipa-fallback").innerText = item.ipa; }
+    input.focus();
+}
+function playListenSpellAudio() {
+    if (!speechSupported || listenSpellIdx >= listenSpellSubset.length) return;
+    let item = listenSpellSubset[listenSpellIdx];
+    window.speechSynthesis.cancel();
+    let utter = new SpeechSynthesisUtterance(item.word);
+    utter.lang = "en-US"; utter.rate = 0.85;
+    window.speechSynthesis.speak(utter);
+}
+function submitListenSpell() {
+    if (listenSpellIdx >= listenSpellSubset.length) return;
+    let item = listenSpellSubset[listenSpellIdx];
+    let input = document.getElementById("ls-input");
+    if (input.disabled) return;
+    input.disabled = true;
+    let isCorrect = input.value.trim().toLowerCase() === item.word.toLowerCase();
+    recordAttempt(item.word, isCorrect);
+    input.classList.add(isCorrect ? "correct-input" : "wrong-input");
+    document.getElementById("ls-reveal").innerHTML = isCorrect
+        ? `<span style="color:var(--success)">Chính xác! ✅</span>`
+        : `<span style="color:var(--danger)">Chưa đúng — đáp án là: <u>${item.word}</u></span>`;
+    incrementDone(1);
+    setTimeout(() => { listenSpellIdx++; showListenSpellQuestion(); }, isCorrect ? 700 : 1400);
+}
+
+// ==================== CHẶNG 4: MATCHING ====================
+function runMatchingStage() {
+    hideAllSubGames();
+    currentSubGame = "matching";
+    document.getElementById("game-matching").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 4: Nối Cặp Từ";
+    let shuffledAll = honestyShuffle(vocabDataset);
+    const ROUND_SIZE = 8;
+    matchRounds = [];
+    for (let i = 0; i < shuffledAll.length; i += ROUND_SIZE) matchRounds.push(shuffledAll.slice(i, i + ROUND_SIZE));
+    matchRoundIdx = 0;
+    loadMatchingRound();
+}
+function loadMatchingRound() {
+    if (matchRoundIdx >= matchRounds.length) { currentStoryId = 1; runStoryStage(); return; }
+    matchSelectedId = null;
+    let subset = matchRounds[matchRoundIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 4: MATCHING — VÒNG ${matchRoundIdx + 1}/${matchRounds.length}`;
+    let cardsData = [];
+    subset.forEach(item => {
+        cardsData.push({ id: item.word, text: `${item.word} (${item.type})`, type: 'eng' });
+        cardsData.push({ id: item.word, text: item.definition, type: 'mean' });
+    });
+    let shuffledCards = honestyShuffle(cardsData);
+    let gridBox = document.getElementById("match-grid-box");
+    gridBox.innerHTML = "";
+    shuffledCards.forEach((item, idx) => {
+        let card = document.createElement("div");
+        card.className = "match-card"; card.innerText = item.text;
+        card.setAttribute("data-id", item.id); card.setAttribute("data-type", item.type);
+        card.id = `m-click-${idx}`;
+        card.onclick = () => {
+            if (card.classList.contains('matched') || card.classList.contains('wrong-flash')) return;
+            if (!matchSelectedId) { card.classList.add('selected'); matchSelectedId = card.id; }
+            else {
+                let first = document.getElementById(matchSelectedId);
+                if (first.id === card.id) { first.classList.remove('selected'); matchSelectedId = null; return; }
+                document.querySelectorAll('#match-grid-box .match-card').forEach(b => b.style.pointerEvents = "none");
+                if (first.getAttribute('data-id') === card.getAttribute('data-id') && first.getAttribute('data-type') !== card.getAttribute('data-type')) {
+                    first.style.borderColor = "var(--success)"; first.style.background = "#d1fae5"; first.style.color = "var(--success)";
+                    card.style.borderColor = "var(--success)"; card.style.background = "#d1fae5"; card.style.color = "var(--success)";
+                    let w = first.getAttribute('data-id');
+                    recordAttempt(w, true); incrementDone(1);
+                    setTimeout(() => {
+                        first.className = "match-card matched"; card.className = "match-card matched";
+                        matchSelectedId = null;
+                        document.querySelectorAll('#match-grid-box .match-card').forEach(b => b.style.pointerEvents = "auto");
+                        if (document.querySelectorAll('#match-grid-box .match-card:not(.matched)').length === 0) { matchRoundIdx++; loadMatchingRound(); }
+                    }, 500);
+                } else {
+                    let w1 = first.getAttribute('data-id'), w2 = card.getAttribute('data-id');
+                    recordAttempt(w1, false); recordAttempt(w2, false);
+                    first.classList.remove('selected');
+                    first.classList.add('wrong-flash'); card.classList.add('wrong-flash');
+                    setTimeout(() => {
+                        first.classList.remove('wrong-flash'); card.classList.remove('wrong-flash');
+                        matchSelectedId = null;
+                        document.querySelectorAll('#match-grid-box .match-card').forEach(b => b.style.pointerEvents = "auto");
+                    }, 800);
+                }
+            }
+        };
+        gridBox.appendChild(card);
+    });
+}
+
+// ==================== CHẶNG 5: STORY ====================
+function runStoryStage() {
+    hideAllSubGames();
+    currentSubGame = "story";
+    document.getElementById("game-story").style.display = 'block';
+    document.getElementById("stage-title").innerText = `Chặng 5: Truyện Chêm (${currentStoryId}/${STORIES.length})`;
+    let nextBtn = document.getElementById("btn-next-global");
+    nextBtn.style.display = 'block'; nextBtn.disabled = true;
+    nextBtn.innerText = "ĐIỀN ĐỦ 6 Ô ĐỂ TIẾP TỤC";
+    document.getElementById("round-badge").innerText = `CHẶNG 5: TRUYỆN CHÊM ${currentStoryId}/${STORIES.length}`;
+    storyAnswers = {};
+    let story = STORIES[currentStoryId - 1];
+    document.getElementById("story-title-display").innerText = story.title;
+    document.getElementById("story-text-container").innerHTML = story.html;
+    document.querySelectorAll('#story-text-container .drop-zone').forEach(zone => {
+        zone.draggable = true;
+        zone.ondragstart = (e) => {
+            let filledValue = zone.getAttribute("data-filled");
+            if (filledValue) {
+                e.dataTransfer.setData("text/plain", filledValue);
+                e.dataTransfer.setData("source-type", "zone");
+                e.dataTransfer.setData("source-slot-id", zone.getAttribute("data-slot-id"));
+            } else e.preventDefault();
+        };
+    });
+    let poolBox = document.getElementById("story-words-pool"); poolBox.innerHTML = "";
+    honestyShuffle(story.words).forEach(w => {
+        let token = document.createElement("div");
+        token.className = "pool-word"; token.id = `st-drag-${btoa(unescape(encodeURIComponent(w))).replace(/=/g, "")}`;
+        let wordObj = vocabDataset.find(o => o.word === w);
+        token.innerText = `${w} (${wordObj.type})`;
+        token.draggable = true;
+        token.ondragstart = (e) => { e.dataTransfer.setData("text/plain", w); e.dataTransfer.setData("source-type", "pool"); };
+        poolBox.appendChild(token);
+    });
+}
+function checkStoryFilled() {
+    let zones = document.querySelectorAll('#story-text-container .drop-zone');
+    let allFilled = Array.from(zones).every(z => z.getAttribute('data-filled'));
+    let nextBtn = document.getElementById("btn-next-global");
+    nextBtn.disabled = !allFilled;
+    nextBtn.innerText = allFilled ? "TIẾP TỤC HÀNH TRÌNH ➔" : "ĐIỀN ĐỦ 6 Ô ĐỂ TIẾP TỤC";
+}
+function handleStoryDrop(e, zone) {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    let word = e.dataTransfer.getData("text/plain");
+    let sourceType = e.dataTransfer.getData("source-type");
+    let sourceSlotId = e.dataTransfer.getData("source-slot-id");
+    let targetSlotId = zone.getAttribute('data-slot-id');
+    if (sourceType === "zone" && sourceSlotId !== targetSlotId) {
+        let sourceZone = document.querySelector(`.drop-zone[data-slot-id="${sourceSlotId}"]`);
+        if (sourceZone) { sourceZone.innerText = ""; sourceZone.removeAttribute("data-filled"); sourceZone.classList.remove('correct-glow', 'wrong-glow'); }
+    }
+    let existingWord = zone.getAttribute("data-filled");
+    if (existingWord) {
+        let cleanId = btoa(unescape(encodeURIComponent(existingWord))).replace(/=/g, "");
+        let poolEl = document.getElementById(`st-drag-${cleanId}`);
+        if (poolEl) poolEl.classList.remove('used');
+    }
+    zone.innerText = word; zone.setAttribute("data-filled", word);
+    let tokenCleanId = btoa(unescape(encodeURIComponent(word))).replace(/=/g, "");
+    let tokenPoolEl = document.getElementById(`st-drag-${tokenCleanId}`);
+    if (tokenPoolEl) tokenPoolEl.classList.add('used');
+    zone.classList.remove('correct-glow', 'wrong-glow');
+    checkStoryFilled();
+}
+function handleStoryBackToPool(e) {
+    e.preventDefault();
+    let word = e.dataTransfer.getData("text/plain");
+    let sourceType = e.dataTransfer.getData("source-type");
+    let sourceSlotId = e.dataTransfer.getData("source-slot-id");
+    if (sourceType === "zone") {
+        let sourceZone = document.querySelector(`.drop-zone[data-slot-id="${sourceSlotId}"]`);
+        if (sourceZone) {
+            sourceZone.innerText = ""; sourceZone.removeAttribute("data-filled"); sourceZone.classList.remove('correct-glow', 'wrong-glow');
+            let cleanId = btoa(unescape(encodeURIComponent(word))).replace(/=/g, "");
+            let poolEl = document.getElementById(`st-drag-${cleanId}`);
+            if (poolEl) poolEl.classList.remove('used');
+        }
+    }
+    checkStoryFilled();
+}
+function globalNextStep() {
+    if (currentSubGame !== "story") return;
+    if (document.getElementById("btn-next-global").disabled) return;
+    let zones = document.querySelectorAll('#story-text-container .drop-zone');
+    zones.forEach(zone => {
+        let expected = zone.getAttribute('data-expected');
+        let filled = zone.getAttribute('data-filled');
+        let isCorrect = expected === filled;
+        recordAttempt(expected, isCorrect);
+        zone.classList.add(isCorrect ? 'correct-glow' : 'wrong-glow');
+    });
+    incrementDone(6);
+    if (currentStoryId < STORIES.length) { currentStoryId++; setTimeout(runStoryStage, 500); }
+    else setTimeout(runTranslationStage, 500);
+}
+
+// ==================== SHARED MC RENDERER ====================
+function renderMCQuestion(containerId, options, correctText, onResolved) {
+    let box = document.getElementById(containerId); box.innerHTML = "";
+    let resolved = false;
+    options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.className = "opt-btn"; btn.innerText = opt;
+        btn.onclick = () => {
+            if (resolved) return; resolved = true;
+            document.querySelectorAll(`#${containerId} .opt-btn`).forEach(b => b.style.pointerEvents = "none");
+            let isCorrect = (opt === correctText);
+            btn.classList.add(isCorrect ? "correct" : "wrong");
+            if (!isCorrect) document.querySelectorAll(`#${containerId} .opt-btn`).forEach(b => { if (b.innerText === correctText) b.classList.add("correct"); });
+            setTimeout(() => onResolved(isCorrect), isCorrect ? 600 : 1200);
+        };
+        box.appendChild(btn);
+    });
+}
+
+// ==================== CHẶNG 6: TRANSLATION ====================
+function runTranslationStage() {
+    hideAllSubGames();
+    currentSubGame = "translation";
+    document.getElementById("game-mc").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 6: Dịch Câu Ngữ Cảnh";
+    translationIdx = 0;
+    showTranslationQuestion();
+}
+function showTranslationQuestion() {
+    if (translationIdx >= translationSubset.length) { runSynonymStage(); return; }
+    let item = translationSubset[translationIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 6: TRANSLATION (${translationIdx + 1}/${translationSubset.length})`;
+    document.getElementById("mc-prompt-title").innerText = "Đọc hiểu câu chứa từ khóa và chọn phương án dịch Tiếng Việt chuẩn nhất:";
+    let highlighted = `<strong style="color:var(--zenlish-blue); text-decoration:underline;">${item.word}</strong>`;
+    let highlightSentence = item.sentence.replace("_______", highlighted);
+    document.getElementById("mc-prompt-body").innerHTML = `<p style="background:#f8fafc; padding:12px; border-radius:8px; margin:10px 0; font-size:1.05rem">${highlightSentence}</p>`;
+    let otherTrans = honestyShuffle(vocabDataset.filter(v => v.word !== item.word && v.trans !== item.trans).map(v => v.trans)).slice(0, 3);
+    let finalOpts = honestyShuffle([item.trans, ...otherTrans]);
+    renderMCQuestion("mc-options-box", finalOpts, item.trans, (isCorrect) => {
+        recordAttempt(item.word, isCorrect); incrementDone(1);
+        translationIdx++; showTranslationQuestion();
+    });
+}
+
+// ==================== CHẶNG 7: SYNONYM RUSH ====================
+function runSynonymStage() {
+    hideAllSubGames();
+    currentSubGame = "synonym";
+    document.getElementById("game-mc").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 7: Đồng Nghĩa Thần Tốc";
+    synonymIdx = 0;
+    showSynonymQuestion();
+}
+function showSynonymQuestion() {
+    if (synonymIdx >= synonymSubset.length) { runTrueFalseStage(); return; }
+    let item = synonymSubset[synonymIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 7: SYNONYM RUSH (${synonymIdx + 1}/${synonymSubset.length})`;
+    document.getElementById("mc-prompt-title").innerHTML = `Cụm miêu tả nào GẦN NGHĨA nhất với <strong style="color:var(--zenlish-blue);">"${item.word}"</strong> <span style="color:var(--gray); font-weight:normal;">(${item.type})</span>?`;
+    document.getElementById("mc-prompt-body").innerHTML = "";
+    let otherSyn = honestyShuffle(vocabDataset.filter(v => v.word !== item.word && v.synonym !== item.synonym).map(v => v.synonym)).slice(0, 3);
+    let finalOpts = honestyShuffle([item.synonym, ...otherSyn]);
+    renderMCQuestion("mc-options-box", finalOpts, item.synonym, (isCorrect) => {
+        recordAttempt(item.word, isCorrect); incrementDone(1);
+        synonymIdx++; showSynonymQuestion();
+    });
+}
+
+// ==================== CHẶNG 8: TRUE / FALSE ====================
+function runTrueFalseStage() {
+    hideAllSubGames();
+    currentSubGame = "truefalse";
+    document.getElementById("game-truefalse").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 8: Đúng Hay Sai";
+    truefalseIdx = 0;
+    showTrueFalseQuestion();
+}
+function showTrueFalseQuestion() {
+    if (truefalseIdx >= truefalseSubset.length) { runSpeedChainStage(); return; }
+    let item = truefalseSubset[truefalseIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 8: TRUE/FALSE (${truefalseIdx + 1}/${truefalseSubset.length})`;
+    let isTrueStatement = Math.random() < 0.5;
+    let shownDef = item.definition;
+    if (!isTrueStatement) {
+        let others = vocabDataset.filter(v => v.word !== item.word && v.definition !== item.definition);
+        shownDef = honestyShuffle(others)[0].definition;
+    }
+    truefalseCurrentItem = item; truefalseCurrentAnswer = isTrueStatement;
+    document.getElementById("tf-statement").innerHTML = `Cụm từ <strong style="color:var(--zenlish-blue);">"${item.word}"</strong> <span style="color:var(--gray);">(${item.type})</span> có nghĩa là:<br><span style="font-size:1.2rem; font-weight:700; color:var(--zenlish-orange);">"${shownDef}"</span>`;
+    document.getElementById("tf-btn-true").disabled = false;
+    document.getElementById("tf-btn-false").disabled = false;
+}
+function answerTrueFalse(userChoice) {
+    document.getElementById("tf-btn-true").disabled = true;
+    document.getElementById("tf-btn-false").disabled = true;
+    let isCorrect = (userChoice === truefalseCurrentAnswer);
+    recordAttempt(truefalseCurrentItem.word, isCorrect);
+    let statementEl = document.getElementById("tf-statement");
+    statementEl.innerHTML += `<br><br><span style="color:${isCorrect ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">${isCorrect ? 'Chính xác! ✅' : `Chưa đúng — nhận định này là ${truefalseCurrentAnswer ? 'ĐÚNG' : 'SAI'}. Nghĩa thật: "${truefalseCurrentItem.definition}"`}</span>`;
+    incrementDone(1);
+    setTimeout(() => { truefalseIdx++; showTrueFalseQuestion(); }, isCorrect ? 700 : 1600);
+}
+
+// ==================== CHẶNG 9: TỐC ĐỘ GÕ LIÊN HOÀN ====================
+function runSpeedChainStage() {
+    hideAllSubGames();
+    currentSubGame = "speedchain";
+    document.getElementById("game-speedchain").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 9: Tốc Độ Gõ Liên Hoàn";
+    speedchainQueue = honestyShuffle(vocabDataset);
+    speedchainIdx = 0; speedchainCombo = 0;
+    showSpeedChainWord();
+}
+function showSpeedChainWord() {
+    clearInterval(speedchainTimer);
+    if (speedchainIdx >= speedchainQueue.length) { runSurvivalStage(); return; }
+    let item = speedchainQueue[speedchainIdx];
+    document.getElementById("round-badge").innerText = `CHẶNG 9: SPEED CHAIN (${speedchainIdx + 1}/${speedchainQueue.length})`;
+    document.getElementById("sc-combo").innerText = `Combo: ${speedchainCombo} | Từ ${speedchainIdx + 1}/${speedchainQueue.length}`;
+    document.getElementById("sc-def").innerText = item.definition;
+    document.getElementById("sc-type").innerText = `[${item.type}]`;
+    document.getElementById("sc-reveal").innerText = "";
+    let input = document.getElementById("sc-input");
+    input.value = ""; input.disabled = false;
+    input.onkeydown = (e) => { if (e.key === "Enter") submitSpeedChain(); };
+    input.focus();
+    speedchainMsLeft = speedchainPerWordMs;
+    document.getElementById("speedchain-timerbar-inner").style.width = "100%";
+    speedchainTimer = setInterval(() => {
+        speedchainMsLeft -= 100;
+        let pct = Math.max(0, (speedchainMsLeft / speedchainPerWordMs) * 100);
+        document.getElementById("speedchain-timerbar-inner").style.width = pct + "%";
+        if (speedchainMsLeft <= 0) { clearInterval(speedchainTimer); resolveSpeedChain(false); }
+    }, 100);
+}
+function submitSpeedChain() {
+    let input = document.getElementById("sc-input");
+    if (input.disabled) return;
+    let item = speedchainQueue[speedchainIdx];
+    let isCorrect = input.value.trim().toLowerCase() === item.word.toLowerCase();
+    resolveSpeedChain(isCorrect);
+}
+function resolveSpeedChain(isCorrect) {
+    clearInterval(speedchainTimer);
+    let item = speedchainQueue[speedchainIdx];
+    let input = document.getElementById("sc-input");
+    input.disabled = true;
+    recordAttempt(item.word, isCorrect); incrementDone(1);
+    if (isCorrect) { speedchainCombo++; document.getElementById("sc-reveal").innerHTML = `<span style="color:var(--success)">Chính xác! 🔥 Combo x${speedchainCombo}</span>`; }
+    else { speedchainCombo = 0; document.getElementById("sc-reveal").innerHTML = `<span style="color:var(--danger)">Đáp án: <u>${item.word}</u></span>`; }
+    setTimeout(() => { speedchainIdx++; showSpeedChainWord(); }, isCorrect ? 350 : 700);
+}
+
+// ==================== CHẶNG 10: SURVIVAL (5s) ====================
+function runSurvivalStage() {
+    hideAllSubGames();
+    currentSubGame = "survival";
+    document.getElementById("game-survival").style.display = 'block';
+    document.getElementById("stage-title").innerText = "Chặng 10: Tốc Biến Sinh Tồn";
+    document.getElementById("survival-countdown").style.display = 'inline-block';
+    survivalQueue = honestyShuffle(vocabDataset);
+    survivalIdx = 0;
+    showSurvivalQuestion();
+}
+function showSurvivalQuestion() {
+    clearInterval(survivalTimer);
+    if (survivalIdx >= survivalQueue.length) { finishMainJourney(); return; }
+    let item = survivalQueue[survivalIdx];
+    survivalSecs = 5;
+    document.getElementById("survival-countdown").innerText = `${survivalSecs}s`;
+    document.getElementById("round-badge").innerText = `CHẶNG 10: EXPRESS CHALLENGE (${survivalIdx + 1}/${survivalQueue.length})`;
+    let isWordToDef = (survivalIdx % 2 === 0);
+    let box = document.getElementById("survival-options-box"); box.innerHTML = "";
+    let correctText = isWordToDef ? item.definition : `${item.word} (${item.type})`;
+    document.getElementById("survival-prompt").innerHTML = isWordToDef
+        ? `Từ loại <span style="color:var(--zenlish-orange)">[${item.type}]</span> của cụm từ <strong style="color:var(--zenlish-blue)">"${item.word}"</strong> nghĩa là gì?`
+        : `Định nghĩa Tiếng Việt <strong style="color:var(--zenlish-orange)">"${item.definition}"</strong> khớp với từ nào?`;
+    let distractors = isWordToDef
+        ? honestyShuffle(vocabDataset.filter(v => v.word !== item.word).map(v => v.definition)).slice(0, 3)
+        : honestyShuffle(vocabDataset.filter(v => v.word !== item.word).map(v => `${v.word} (${v.type})`)).slice(0, 3);
+    let finalOpts = honestyShuffle([correctText, ...distractors]);
+    finalOpts.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.className = "survival-btn"; btn.innerText = opt;
+        btn.onclick = () => resolveSurvival(opt === correctText, btn, correctText);
+        box.appendChild(btn);
+    });
+    survivalTimer = setInterval(() => {
+        survivalSecs--;
+        document.getElementById("survival-countdown").innerText = `${survivalSecs}s`;
+        if (survivalSecs <= 0) { clearInterval(survivalTimer); resolveSurvival(false, null, correctText); }
+    }, 1000);
+    function resolveSurvival(isCorrect, btn, correctText) {
+        clearInterval(survivalTimer);
+        document.querySelectorAll(".survival-btn").forEach(b => b.style.pointerEvents = "none");
+        if (btn) btn.classList.add(isCorrect ? "correct" : "wrong");
+        if (!isCorrect) document.querySelectorAll(".survival-btn").forEach(b => { if (b.innerText === correctText) b.classList.add("correct"); });
+        recordAttempt(item.word, isCorrect); incrementDone(1);
+        setTimeout(() => { survivalIdx++; showSurvivalQuestion(); }, isCorrect ? 500 : 1100);
+    }
+}
+
+// ==================== SAU HÀNH TRÌNH CHÍNH: MASTERY & CHỐT HẠ ====================
+function finishMainJourney() { checkMasteryThreshold(); }
+function checkMasteryThreshold() {
+    let masteredCount = vocabDataset.filter(v => isWordMastered(v.word)).length;
+    let pct = (masteredCount / vocabDataset.length) * 100;
+    if (pct >= 85 || chothaRoundNum >= 5) { finishQuiz(pct); return; }
+    let weakWords = vocabDataset.filter(v => !isWordMastered(v.word));
+    chothaRoundNum++;
+    runChotHaStage(weakWords);
+}
+function runChotHaStage(weakWords) {
+    hideAllSubGames();
+    currentSubGame = "chotha";
+    document.getElementById("game-chotha").style.display = 'block';
+    document.getElementById("stage-title").innerText = `Chặng Chốt Hạ — Vòng ${chothaRoundNum}`;
+    document.getElementById("round-badge").innerText = `CHỐT HẠ VÒNG ${chothaRoundNum} — ${weakWords.length} TỪ CẦN RÀ LẠI`;
+    chothaQueue = honestyShuffle(weakWords);
+    chothaIdx = 0;
+    showChotHaQuestion();
+}
+function showChotHaQuestion() {
+    if (chothaIdx >= chothaQueue.length) { checkMasteryThreshold(); return; }
+    let item = chothaQueue[chothaIdx];
+    document.getElementById("chotha-prompt-body").innerHTML = `"${item.word}" <span style="color:var(--gray); font-weight:normal; font-size:0.9rem;">(${item.type})</span> nghĩa là gì?`;
+    let distractors = honestyShuffle(vocabDataset.filter(v => v.word !== item.word).map(v => v.definition)).slice(0, 3);
+    let finalOpts = honestyShuffle([item.definition, ...distractors]);
+    renderMCQuestion("chotha-options-box", finalOpts, item.definition, (isCorrect) => {
+        masteryRecord[item.word].chotha = isCorrect;
+        updateMasteryCounter();
+        chothaIdx++; showChotHaQuestion();
+    });
+}
+
+// ==================== KẾT THÚC & CHỨNG NHẬN ====================
+function finishQuiz(finalPct) {
+    clearInterval(timerInterval); clearInterval(survivalTimer); clearInterval(speedchainTimer);
+    document.getElementById("screen-game").classList.remove("active");
+    document.getElementById("screen-result").classList.add("active");
+    document.getElementById("status-area").style.display = "none";
+    document.getElementById("progress-area").style.display = "none";
+    setProgress(100);
+    let m = Math.floor(elapsedSeconds / 60), s = elapsedSeconds % 60;
+    let timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    let roundedPct = Math.round(finalPct);
+    document.getElementById("celebration-title").innerText = roundedPct >= 95 ? "XUẤT SẮC — GẦN NHƯ THUỘC TUYỆT ĐỐI!" : "CHÚC MỪNG BẠN ĐÃ ĐẠT NGƯỠNG THUỘC!";
+    document.getElementById("result-summary").innerText = `Học viên ${studentName} đã hoàn thành hành trình ${vocabDataset.length} từ vựng, thời gian: ${timeStr}.`;
+    document.getElementById("mastery-pct-display").innerText = `${roundedPct}%`;
+    generateCertificate(studentName, roundedPct, timeStr);
+    buildReviewSection();
+}
+function generateCertificate(name, pct, timeStr) {
+    let canvas = document.getElementById("canvas-cert"); let ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, 800, 550);
+    ctx.strokeStyle = "#0037f4"; ctx.lineWidth = 14; ctx.strokeRect(20, 20, 760, 510);
+    ctx.strokeStyle = "#ff7900"; ctx.lineWidth = 2; ctx.strokeRect(34, 34, 732, 482);
+    ctx.fillStyle = "#0037f4"; ctx.font = "bold 26px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("ZENLISH TOEIC SYSTEM", 400, 95);
+    ctx.fillStyle = "#ff7900"; ctx.font = "bold 13px sans-serif"; ctx.fillText("HỌC TOEIC 1 LẦN LÀ ĐẠT", 400, 120);
+    ctx.fillStyle = "#1e293b"; ctx.font = "bold 24px sans-serif"; ctx.fillText("CHỨNG NHẬN HOÀN THÀNH", 400, 195);
+    ctx.fillStyle = "#64748b"; ctx.font = "italic 16px sans-serif"; ctx.fillText("Vinh danh học viên đã chinh phục xuất sắc mục tiêu bài học:", 400, 235);
+    ctx.fillStyle = "#0037f4"; ctx.font = "bold 32px sans-serif"; ctx.fillText(name, 400, 290);
+    ctx.fillStyle = "#0f172a"; ctx.font = "bold 20px sans-serif";
+    ctx.fillText(`ĐẠT NGƯỠNG THUỘC ${pct}% BỘ ${vocabDataset.length} TỪ VỰNG TOEIC`, 400, 355);
+    ctx.fillStyle = "#16a34a"; ctx.font = "bold 18px sans-serif";
+    ctx.fillText(`Thời gian hoàn thành: ${timeStr}`, 400, 395);
+    ctx.fillStyle = "#64748b"; ctx.font = "14px sans-serif"; ctx.fillText(`Hà Nội, Tháng 07 năm 2026`, 400, 475);
+}
+function downloadCertificate() {
+    let canvas = document.getElementById("canvas-cert"); let link = document.createElement("a");
+    link.download = `Zenlish_ChungNhan_${studentName.replace(/\s+/g, '_')}.png`;
+    link.href = canvas.toDataURL("image/png"); link.click();
+}
+function buildReviewSection() {
+    let box = document.getElementById("review-list-content"); box.innerHTML = "";
+    vocabDataset.forEach((item, index) => {
+        let div = document.createElement("div"); div.className = "review-item";
+        div.innerHTML = `<strong>${index + 1}. ${item.word} (${item.type})</strong> <span style="color:var(--gray)">${item.ipa}</span>: ${item.definition}<br><small style="color:#475569; font-style:italic">➔ Ngữ cảnh câu: ${item.sentence}</small>`;
+        box.appendChild(div);
+    });
+}
+function toggleTheorySection() {
+    let box = document.getElementById("review-box");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+    if (box.style.display === "block") box.scrollIntoView({ behavior: 'smooth' });
+}
+function restartQuiz() {
+    clearInterval(timerInterval); clearInterval(survivalTimer); clearInterval(speedchainTimer);
+    currentStoryId = 1; chothaRoundNum = 0;
+    document.getElementById("screen-result").classList.remove("active");
+    document.getElementById("review-box").style.display = "none";
+    document.getElementById("screen-game").classList.add("active");
+    document.getElementById("status-area").style.display = "flex";
+    document.getElementById("progress-area").style.display = "block";
+    document.getElementById("timer").innerText = "00:00";
+    setProgress(0);
+    resetStateAndStart();
+}
+</script>
+</body>
+</html>
